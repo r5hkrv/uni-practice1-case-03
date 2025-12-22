@@ -1,7 +1,8 @@
 {
   "name": "uni-practice1-case-03",
   "workspaces": [
-    "server"
+    "server",
+    "client"
   ],
   "devDependencies": {
     "typescript": "^5.9.3"
