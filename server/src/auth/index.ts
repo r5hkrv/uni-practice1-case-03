@@ -2,7 +2,7 @@ import fp from "fastify-plugin";
 import fastifyJwt from "@fastify/jwt";
 import type { onRequestAsyncHookHandler } from "fastify";
 
-import { userBodySchema, type UserBodySchema } from "./user.schema.js";
+import { userSchema, type UserBodySchema } from "./user.schema.js";
 import { createUser, verifyUser } from "./user.js";
 
 const TOKEN_EXPIRY_TIME = "15m";
@@ -15,15 +15,15 @@ export default fp((server) => {
 
 	server.post<{ Body: UserBodySchema }>(
 		"/signup",
-		{ schema: { body: userBodySchema }, attachValidation: true },
+		{ schema: userSchema, attachValidation: true },
 		async (request, reply) => {
 			if (request.validationError !== undefined) {
 				return reply.status(400).send(request.validationError);
 			}
-			const { statusCode } = await createUser(request.body);
+			const { statusCode, payload } = await createUser(request.body);
 
-			if (statusCode === 200) {
-				return await reply.jwtSign({ username: request.body.name });
+			if (statusCode === 200 && payload !== null) {
+				return await reply.jwtSign(payload);
 			}
 			reply.status(statusCode);
 		}
@@ -31,15 +31,15 @@ export default fp((server) => {
 
 	server.post<{ Body: UserBodySchema }>(
 		"/signin",
-		{ schema: { body: userBodySchema }, attachValidation: true },
+		{ schema: userSchema, attachValidation: true },
 		async (request, reply) => {
 			if (request.validationError !== undefined) {
 				return reply.status(400).send(request.validationError);
 			}
-			const { statusCode } = await verifyUser(request.body);
+			const { statusCode, payload } = await verifyUser(request.body);
 
-			if (statusCode === 200) {
-				return await reply.jwtSign({ username: request.body.name });
+			if (statusCode === 200 && payload !== null) {
+				return await reply.jwtSign(payload);
 			}
 			reply.status(statusCode);
 		}
