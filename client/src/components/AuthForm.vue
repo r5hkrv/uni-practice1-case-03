@@ -1,28 +1,22 @@
 <script setup lang="ts">
-import { labelFromPath } from "../utils/string";
-import TextField from "./TextField.vue";
+import useAuth, { type AuthRoutePath } from "../composables/useAuth";
+import TextField from "../components/TextField.vue";
 
-const props = defineProps<{
-  path: "/signup" | "/signin";
-}>();
+const props = defineProps<{ path: AuthRoutePath }>();
 
-const handleSubmit = () => {
-  console.log(`Fetch ${props.path}`);
-};
+const { fields, submitLabel, handleSubmit } = useAuth(props.path);
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" class="form">
-    <TextField id="name" label="Name" />
-    <TextField id="password" label="Password" />
-    <button type="submit">
-      {{ labelFromPath(path, "sign") }}
-    </button>
+  <form @submit.prevent="handleSubmit">
+    <TextField v-model="fields.email" id="email" label="Name" />
+    <TextField v-model="fields.password" id="password" label="Password" />
+    <button type="submit">{{ submitLabel }}</button>
   </form>
 </template>
 
 <style scoped>
-.form {
+form {
   display: flex;
   flex-direction: column;
   align-items: start;

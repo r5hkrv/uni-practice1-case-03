@@ -3,6 +3,7 @@ import { useTemplateRef } from "vue";
 
 defineProps<{ id: string; label: string; placeholder?: string }>();
 
+const model = defineModel<string>({ required: true });
 const notch = useTemplateRef("notch");
 
 const setFocused = (value: boolean) => {
@@ -22,6 +23,7 @@ const setFocused = (value: boolean) => {
       {{ label }}
     </label>
     <input
+      v-model="model"
       :id="`field-id-${id}`"
       class="field-input"
       type="text"
