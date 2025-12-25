@@ -2,7 +2,8 @@
   "name": "uni-semester6-practice-case3",
   "workspaces": [
     "server",
-    "client"
+    "client",
+    "internal/vue-router-fallback"
   ],
   "devDependencies": {
     "typescript": "^5.9.3"
