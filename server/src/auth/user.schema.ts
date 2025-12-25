@@ -1,25 +1,12 @@
-export const userSchema = {
+import type { FromSchema } from "json-schema-to-ts";
+
+export const userBodySchema = {
 	type: "object",
 	properties: {
-		name: { type: "string" },
+		email: { type: "string" },
 		password: { type: "string" },
 	},
-	required: ["name", "password"],
+	required: ["email", "password"],
 } as const;
 
-type Schema<
-	T extends {
-		properties: { [x: PropertyKey]: { type: string } };
-	},
-	P extends T["properties"] = T["properties"]
-> = {
-	[K in keyof P]: P[K]["type"] extends "string"
-		? string
-		: P[K]["type"] extends "number"
-		? number
-		: P[K]["type"] extends "boolean"
-		? boolean
-		: unknown;
-};
-
-export type UserSchema = Schema<typeof userSchema>;
+export type UserBodySchema = FromSchema<typeof userBodySchema>;

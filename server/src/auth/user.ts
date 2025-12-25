@@ -1,30 +1,29 @@
+import { prisma } from "../prisma.js";
 import bcrypt from "bcryptjs";
 
-import type { UserSchema } from "./user.schema.js";
+import type { UserBodySchema } from "./user.schema.js";
 
-type User = {
-	name: string;
-	pwhash: string;
-};
+export const createUser = async ({ email, password }: UserBodySchema) => {
+	const user = await prisma.user.findUnique({ where: { email } });
 
-const users: Record<string, User> = {};
+	if (user !== null) return { statusCode: 400 };
 
-export const createUser = async (user: UserSchema) => {
-	if (user.name in users) return { statusCode: 400 };
+	const pwhash = await bcrypt.hash(password, 10);
 
-	const pwhash = await bcrypt.hash(user.password, 10);
-
-	users[user.name] = { name: user.name, pwhash };
+	await prisma.user.create({ data: { email, pwhash } });
 
 	return { statusCode: 200 };
 };
 
-export const verifyUser = async (user: UserSchema) => {
-	if (!(user.name in users)) return { statusCode: 404 };
+export const verifyUser = async ({ email, password }: UserBodySchema) => {
+	try {
+		const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+		const isPasswordOk = await bcrypt.compare(password, user.pwhash);
 
-	const equals = await bcrypt.compare(user.password, users[user.name].pwhash);
+		if (!isPasswordOk) return { statusCode: 401 };
 
-	if (!equals) return { statusCode: 401 };
-
-	return { statusCode: 200 };
+		return { statusCode: 200 };
+	} catch (error) {
+		return { statusCode: 404 };
+	}
 };

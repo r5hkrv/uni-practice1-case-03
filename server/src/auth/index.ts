@@ -2,7 +2,7 @@ import fp from "fastify-plugin";
 import fastifyJwt from "@fastify/jwt";
 import type { onRequestAsyncHookHandler } from "fastify";
 
-import { userSchema, type UserSchema } from "./user.schema.js";
+import { userBodySchema, type UserBodySchema } from "./user.schema.js";
 import { createUser, verifyUser } from "./user.js";
 
 const TOKEN_EXPIRY_TIME = "15m";
@@ -13,9 +13,9 @@ export default fp((server) => {
 		sign: { expiresIn: TOKEN_EXPIRY_TIME },
 	});
 
-	server.post<{ Body: UserSchema }>(
+	server.post<{ Body: UserBodySchema }>(
 		"/signup",
-		{ schema: { body: userSchema }, attachValidation: true },
+		{ schema: { body: userBodySchema }, attachValidation: true },
 		async (request, reply) => {
 			if (request.validationError !== undefined) {
 				return reply.status(400).send(request.validationError);
@@ -29,9 +29,9 @@ export default fp((server) => {
 		}
 	);
 
-	server.post<{ Body: UserSchema }>(
+	server.post<{ Body: UserBodySchema }>(
 		"/signin",
-		{ schema: { body: userSchema }, attachValidation: true },
+		{ schema: { body: userBodySchema }, attachValidation: true },
 		async (request, reply) => {
 			if (request.validationError !== undefined) {
 				return reply.status(400).send(request.validationError);
