@@ -43,13 +43,11 @@ const vueRouterFallback: VueRouterFallbackPlugin = async (
 	{ clientBuildDir }
 ) => {
 	fastify.get("/*", async (request, reply) => {
-		try {
-			const buffer = await getBuildArtifact(clientBuildDir, "index.html");
+		const artifact = await getBuildArtifact(clientBuildDir, "index.html");
 
-			reply.type("text/html").send(buffer);
-		} catch (error) {
-			reply.status(404);
-		}
+		if (artifact === null) return reply.status(404);
+
+		reply.type(artifact.type).send(artifact.data);
 	});
 
 	fastify.get("/assets/*", async (request, reply) => {
