@@ -47,7 +47,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 			});
 
 			if (user === null) {
-				reply.status(400);
+				reply.status(404);
 
 				return;
 			}
