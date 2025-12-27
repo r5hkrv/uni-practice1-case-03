@@ -58,7 +58,7 @@ const vueRouterFallback: VueRouterFallbackPlugin = async (
 			const artifact = await getBuildArtifact(clientBuildDir, filepath);
 
 			if (artifact === null) {
-				reply.status(400);
+				reply.status(403);
 
 				return;
 			}
