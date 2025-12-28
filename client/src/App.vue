@@ -1,20 +1,32 @@
 <script setup lang="ts">
-import FancyLink from "./components/FancyLink.vue";
-import useAuthStore from "./composables/useAuthStore";
+import { ref, watch } from "vue";
 
-const { user } = useAuthStore();
+import { type User, getProfile } from "./api";
+import useAuthStore from "./auth/useAuthStore";
+import FancyLink from "./components/FancyLink.vue";
+import CurrentProfileLink from "./profile/CurrentProfileLink.vue";
+
+const user = ref<User | null>(null);
+
+const { token } = useAuthStore();
+
+watch(token, async () => {
+  if (token.value === null) return;
+
+  user.value = await getProfile(token.value);
+});
 </script>
 
 <template>
   <header id="header" class="header">
     <nav id="header-nav">
-      <div id="header-nav-main">
+      <div id="header-nav-left">
         <FancyLink to="/">Home</FancyLink>
       </div>
-      <span v-if="user !== null">
-        {{ user.email }}
-      </span>
-      <FancyLink v-else to="/signin">Sign in</FancyLink>
+      <div id="header-nav-right">
+        <CurrentProfileLink v-if="user !== null" :user />
+        <FancyLink v-else to="/signin">Sign in</FancyLink>
+      </div>
     </nav>
   </header>
   <main>
@@ -28,20 +40,27 @@ const { user } = useAuthStore();
 }
 
 #header-nav,
-#header-nav-main {
+#header-nav-left,
+#header-nav-right {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  column-gap: 0.5rem;
+  column-gap: 1rem;
 }
 
-#header-nav-main {
+#header-nav {
+  padding-inline: 1rem;
+}
+
+#header-nav-left,
+#header-nav-right {
+  padding-block: 1rem;
+}
+
+#header-nav-left {
   flex: 1;
 }
 
 .header {
-  padding: 1rem;
-
   border-radius: 1rem;
 
   background-color: oklch(1 0 0);

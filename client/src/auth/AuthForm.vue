@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { shallowRef, computed } from "vue";
+import { computed, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 
-import useAuthStore, { type AuthPath } from "../composables/useAuthStore";
+import { type AuthPath, getToken } from "../api";
+import useAuthStore from "./useAuthStore";
 import TextField from "../components/TextField.vue";
 
 const props = defineProps<{ path: AuthPath }>();
@@ -16,22 +17,22 @@ const submitLabel = computed(() => {
   }
 });
 
-const { fetchToken, fetchProfile } = useAuthStore();
-const router = useRouter();
-
 const fields = shallowRef({
   email: "",
   password: "",
 });
 
+const router = useRouter();
+const { setToken } = useAuthStore();
+
 const handleSubmit = async () => {
-  let ok = await fetchToken(props.path, fields.value);
+  const token = await getToken(props.path, fields.value);
 
-  if (!ok) return;
+  if (token === null) return;
 
-  ok = await fetchProfile();
+  setToken(token);
 
-  if (ok) router.push("/");
+  router.back();
 };
 </script>
 

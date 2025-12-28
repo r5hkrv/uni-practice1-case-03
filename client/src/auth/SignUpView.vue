@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Card from "../components/Card.vue";
-import AuthForm from "../components/AuthForm.vue";
+import AuthForm from "./AuthForm.vue";
 </script>
 
 <template>

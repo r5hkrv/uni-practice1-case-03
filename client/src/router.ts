@@ -1,14 +1,22 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {
+	type RouteRecordRaw,
+	createRouter,
+	createWebHistory,
+} from "vue-router";
 
 import HomeView from "./views/HomeView.vue";
-import SignUpView from "./views/SignUpView.vue";
-import SignInView from "./views/SignInView.vue";
+import SignUpView from "./auth/SignUpView.vue";
+import SignInView from "./auth/SignInView.vue";
+import CurrentProfileView from "./profile/CurrentProfileView.vue";
+import OtherProfileView from "./profile/OtherProfileView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
 
-const routes = [
+const routes: RouteRecordRaw[] = [
 	{ path: "/", component: HomeView },
 	{ path: "/signup", component: SignUpView },
 	{ path: "/signin", component: SignInView },
+	{ path: "/profile", component: CurrentProfileView },
+	{ path: "/profile/:id", component: OtherProfileView },
 	{ path: "/:pathMatch(.*)", component: NotFoundView },
 ];
 
